@@ -7,17 +7,12 @@
 
 #include "targetver.h"
 
+#include <iostream>
+#include <string>
 #include <stdio.h>
 #include <tchar.h>
 
-#define MaxUserPropertiesForEntity 5
-
-#define DiaryWorkspaceFormat	".dws"
-#define DiaryLevelFormat		".dlv"
-#define DiaryFloorDataFormat	".dfd"
-
-// Exported formats
-#define DiaryLevelExportFormat	".csv"
+#include "Common.h"
 
 // TODO: reference additional headers your program requires here
 
@@ -28,5 +23,6 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
+#include "DiaryEntityDefinition.h"
 #include "DiaryLevel.h"
 #include "DiaryWorkspace.h"

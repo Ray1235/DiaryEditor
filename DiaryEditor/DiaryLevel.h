@@ -1,5 +1,5 @@
 #pragma once
-#include "DiaryWorkspace.h"
+#include "stdafx.h"
 
 class DiaryLevel
 {

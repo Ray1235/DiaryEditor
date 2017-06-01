@@ -8,12 +8,25 @@ bool splashWindowOpen = true;
 
 bool entityListWindowOpen = true;
 bool entityPropertiesWindowOpen = true;
+bool workspaceObjectsWindowOpen = true;
 
 DiaryWorkspace * Workspace = NULL;
 
-int main()
+std::string workspaceToLoad = "";
+
+int main(int argc, char * argv[])
 {
-	sf::RenderWindow window(sf::VideoMode(640, 480), "ImGui test", sf::Style::Default | sf::Style::Resize);
+	Print("Initializing DiaryEditor...\n");
+	for (int i = 0; i < argc; i++)
+	{
+		Print("Arg %d: %s\n", i, argv[i]);
+	}
+	if (argc >= 2)
+	{
+		Print("Loading %s...\n", argv[1]);
+		workspaceToLoad = argv[1];
+	}
+	sf::RenderWindow window(sf::VideoMode(640, 480), "DiaryEditor", sf::Style::Default);
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window);
 	window.setTitle("DiaryEditor 1.0.0");
@@ -77,6 +90,22 @@ int main()
 	style->Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.25f, 1.00f, 0.00f, 0.43f);
 	style->Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
 
+	if (workspaceToLoad.length() != 0)
+	{
+		FILE * f;
+		fopen_s(&f, workspaceToLoad.c_str(), "rb");
+		if (f)
+		{
+			fclose(f);
+			Workspace = new DiaryWorkspace();
+			Workspace->Load(workspaceToLoad);
+		}
+		else {
+			Print("Failed to open file!");
+		}
+	}
+	if(!Workspace)
+		Workspace = new DiaryWorkspace();
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -114,12 +143,16 @@ int main()
 			}
 			if (ImGui::BeginMenu("Edit"))
 			{
+				/*
 				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
 				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
 				ImGui::Separator();
 				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
 				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
 				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+				*/
+				if (ImGui::MenuItem("Add new floor...")) {}
+				if (ImGui::MenuItem("Add new level to floor...")) {}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Window"))

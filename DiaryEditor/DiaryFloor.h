@@ -1,4 +1,5 @@
 #pragma once
+#include "DiaryLevel.h"
 #include "stdafx.h"
 
 struct LevelEntry {

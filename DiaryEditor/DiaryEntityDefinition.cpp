@@ -1,12 +1,2 @@
+#include "stdafx.h"
 #include "DiaryEntityDefinition.h"
-
-
-
-DiaryEntityDefinition::DiaryEntityDefinition()
-{
-}
-
-
-DiaryEntityDefinition::~DiaryEntityDefinition()
-{
-}
