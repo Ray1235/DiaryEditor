@@ -10,6 +10,8 @@ bool entityListWindowOpen = true;
 bool entityPropertiesWindowOpen = true;
 bool workspaceObjectsWindowOpen = true;
 
+bool showImGuiTestWindow = false;
+
 DiaryWorkspace * Workspace = NULL;
 
 std::string workspaceToLoad = "";
@@ -26,7 +28,7 @@ int main(int argc, char * argv[])
 		Print("Loading %s...\n", argv[1]);
 		workspaceToLoad = argv[1];
 	}
-	sf::RenderWindow window(sf::VideoMode(640, 480), "DiaryEditor", sf::Style::Default);
+	sf::RenderWindow window(sf::VideoMode(800, 600), "DiaryEditor", sf::Style::Default);
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window);
 	window.setTitle("DiaryEditor 1.0.0");
@@ -48,8 +50,8 @@ int main(int argc, char * argv[])
 
 	style->Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.83f, 1.00f);
 	style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
-	style->Colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-	style->Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
+	style->Colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.05f, 0.07f, 0.9f);
+	style->Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.07f, 0.07f, 0.09f, 0.9f);
 	style->Colors[ImGuiCol_PopupBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
 	style->Colors[ImGuiCol_Border] = ImVec4(0.80f, 0.80f, 0.83f, 0.88f);
 	style->Colors[ImGuiCol_BorderShadow] = ImVec4(0.92f, 0.91f, 0.88f, 0.00f);
@@ -158,6 +160,13 @@ int main(int argc, char * argv[])
 			if (ImGui::BeginMenu("Window"))
 			{
 				//ImGui::Checkbox("", bool);
+				ImGui::Checkbox("Entity List", &entityListWindowOpen);
+				ImGui::Checkbox("Entity Properties", &entityPropertiesWindowOpen);
+				ImGui::Checkbox("Workspace Objects", &workspaceObjectsWindowOpen);
+#ifdef _DEBUG
+				ImGui::Separator();
+				ImGui::Checkbox("Show ImGui Test Window", &showImGuiTestWindow);
+#endif
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
@@ -181,6 +190,27 @@ int main(int argc, char * argv[])
 
 			ImGui::End(); // end window
 		}
+
+		if (entityListWindowOpen)
+		{
+			ImGui::Begin("Entity List", &entityListWindowOpen);
+			ImGui::End();
+		}
+
+		if (entityPropertiesWindowOpen)
+		{
+			ImGui::Begin("Entity Properties", &entityPropertiesWindowOpen);
+			
+			ImGui::End();
+		}
+
+		if (workspaceObjectsWindowOpen)
+		{
+			ImGui::Begin("Workspace Objects", &workspaceObjectsWindowOpen);
+			ImGui::End();
+		}
+
+		if (showImGuiTestWindow) ImGui::ShowTestWindow(&showImGuiTestWindow);
 		window.clear();
 		ImGui::Render();
 		window.display();

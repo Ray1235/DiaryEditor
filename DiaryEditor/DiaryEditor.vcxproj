@@ -187,6 +187,10 @@
     <ClInclude Include="imgui-SFML.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="RapidXML\rapidxml.hpp" />
+    <ClInclude Include="RapidXML\rapidxml_iterators.hpp" />
+    <ClInclude Include="RapidXML\rapidxml_print.hpp" />
+    <ClInclude Include="RapidXML\rapidxml_utils.hpp" />
     <ClInclude Include="stb_rect_pack.h" />
     <ClInclude Include="stb_textedit.h" />
     <ClInclude Include="stb_truetype.h" />

@@ -16,6 +16,9 @@
     <Filter Include="Source Files\ImGUI">
       <UniqueIdentifier>{4bd4e0c4-3e10-4a4e-8fd7-019d75d574a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\RapidXML">
+      <UniqueIdentifier>{bb706ee5-111b-40c1-afd2-30cd8867eb0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -65,6 +68,18 @@
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml.hpp">
+      <Filter>Source Files\RapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml_iterators.hpp">
+      <Filter>Source Files\RapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml_print.hpp">
+      <Filter>Source Files\RapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml_utils.hpp">
+      <Filter>Source Files\RapidXML</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
