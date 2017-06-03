@@ -178,6 +178,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="DiaryEntity.h" />
     <ClInclude Include="DiaryEntityDefinition.h" />
     <ClInclude Include="DiaryFloor.h" />
     <ClInclude Include="DiaryLevel.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui-SFML.h" />
     <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_dock.h" />
     <ClInclude Include="imgui_internal.h" />
     <ClInclude Include="RapidXML\rapidxml.hpp" />
     <ClInclude Include="RapidXML\rapidxml_iterators.hpp" />
@@ -199,12 +202,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="DiaryEditor.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DiaryEntity.cpp" />
     <ClCompile Include="DiaryEntityDefinition.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -241,6 +246,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="imgui_dock.inl" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -12,8 +12,6 @@
 #include <stdio.h>
 #include <tchar.h>
 
-#include "Common.h"
-
 // TODO: reference additional headers your program requires here
 
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -21,7 +19,11 @@
 #include <SFML/Window/Event.hpp>
 
 #include "imgui.h"
+#include "imgui_dock.h"
 #include "imgui-SFML.h"
+
+#include "Console.h"
+#include "Common.h"
 
 #include "DiaryEntityDefinition.h"
 #include "DiaryLevel.h"

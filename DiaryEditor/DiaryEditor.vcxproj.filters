@@ -81,6 +81,15 @@
     <ClInclude Include="RapidXML\rapidxml_utils.hpp">
       <Filter>Source Files\RapidXML</Filter>
     </ClInclude>
+    <ClInclude Include="DiaryEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_dock.h">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -116,8 +125,17 @@
     <ClCompile Include="Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DiaryEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="imgui_dock.inl">
+      <Filter>Source Files\ImGUI</Filter>
+    </None>
   </ItemGroup>
 </Project>
