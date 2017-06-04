@@ -2,6 +2,9 @@
 //
 
 #include "stdafx.h"
+//#include "Roboto-Medium-TTF-Font.h"
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 // Splash window
 bool splashWindowOpen = true;
@@ -20,6 +23,27 @@ DiaryWorkspace * Workspace = NULL;
 
 std::string workspaceToLoad = "";
 
+static sf::Texture *s_customFontTexture = NULL; // used for the custom font
+unsigned char* fontpixels;
+int fntwidth, fntheight;
+bool isEmptyWorkspace = true;
+
+const char * Workspace_GetFloorName(int index)
+{
+	if (Workspace)
+	{
+		return Workspace->GetFloorName(index);
+	}
+	else {
+		return 0;
+	}
+}
+
+void Workspace_AddFloor(const char * sname, const char * name)
+{
+	Workspace->AddFloor(sname, name);
+}
+
 int main(int argc, char * argv[])
 {
 	Print("Initializing DiaryEditor...");
@@ -33,11 +57,18 @@ int main(int argc, char * argv[])
 		workspaceToLoad = argv[1];
 	}
 	sf::RenderWindow window(sf::VideoMode(800, 600), "DiaryEditor", sf::Style::Default);
+
+	ImFont *f = ImGui::GetIO().Fonts->AddFontFromFileTTF("segoeui.ttf", 16.0f);//AddFontFromMemoryTTF((void *)roboto_data, roboto_size, 12.0f);
+	ImGui::GetIO().Fonts->GetTexDataAsRGBA32(&fontpixels, &fntwidth, &fntheight);
+	s_customFontTexture = new sf::Texture;
+	s_customFontTexture->create(fntwidth, fntheight);
+	s_customFontTexture->update(fontpixels);
+
 	window.setVerticalSyncEnabled(true);
-	ImGui::SFML::Init(window);
+	ImGui::SFML::Init(window, s_customFontTexture);
 	window.setTitle("DiaryEditor 1.0.0");
 	sf::Clock deltaClock;
-	
+
 	ImGuiStyle * style2 = &ImGui::GetStyle();
 
 	style2->WindowPadding = ImVec2(15, 15);
@@ -95,9 +126,11 @@ int main(int argc, char * argv[])
 	style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
 	style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.50f, 0.00f, 1.00f);
 	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(1.00f, 0.50f, 0.00f, 0.43f);
-	style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
+	style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.00f, 0.00f, 0.00f, 0.80f);
 
-	
+
+
+
 	if (workspaceToLoad.length() != 0)
 	{
 		FILE * f;
@@ -107,6 +140,7 @@ int main(int argc, char * argv[])
 			fclose(f);
 			Workspace = new DiaryWorkspace();
 			Workspace->Load(workspaceToLoad);
+			isEmptyWorkspace = false;
 		}
 		else {
 			Print("ERROR: Failed to open file!");
@@ -164,39 +198,97 @@ int main(int argc, char * argv[])
 		}
 
 		ImGui::SFML::Update(window, deltaClock.restart());
-		
-			if (splashWindowOpen)
+
+		if (splashWindowOpen)
+		{
+			ImGui::Begin("Welcome!", &splashWindowOpen, ImGuiWindowFlags_NoResize); // begin window
+
+			ImGui::Text("Choose an action");
+			if (ImGui::Button("New..."))
 			{
-				/*ImGui::SetNextWindowSize(ImVec2(400, 400));*/
-				ImGui::Begin("Welcome!", &splashWindowOpen, ImGuiWindowFlags_NoResize); // begin window
-
-				ImGui::Text("Choose an action");
-				ImGui::Button("New..."); ImGui::SameLine();
-				ImGui::Button("Open...");
-				/*
-				int selectedRecent = 0;
-				static const char* stuff[] = { "I did naaat", "Fat" };
-				//ImGui::LabelText("test", "wat");
-				ImGui::ListBoxHeader("Recent Files");
-				ImGui::ListBox("", &selectedRecent, stuff, 2);
-				ImGui::ListBoxFooter();
-				*/
-				ImGui::End(); // end window
+				if (!isEmptyWorkspace)
+				{
+					Print("WARNING: Workspace is not empty! Saving...");
+				}
 			}
-
-
-			if (showConsole)
+			ImGui::SameLine();
+			if (ImGui::Button("Open..."))
 			{
-				ShowConsole(&showConsole);
-			}
 
-			if (showImGuiTestWindow) ImGui::ShowTestWindow(&showImGuiTestWindow);
+			}
+			ImGui::End(); // end window
+		}
+
+
+		if (showConsole)
+		{
+			ShowConsole(&showConsole);
+		}
+
+		if (showImGuiTestWindow) ImGui::ShowTestWindow(&showImGuiTestWindow);
 
 		ImVec2 d(200.0f, 200.0f);
+
+
+		ImGui::BeginDock("Floors");
+		ImGui::BeginGroup();
+		ImGui::BeginChild("floor view", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()));
+		for (int i = 0; i < Workspace->GetFloorCount(); i++)
+		{
+			if (Workspace->isValidFloor(i))
+			{
+				if (ImGui::Selectable(Workspace_GetFloorName(i), Workspace->currentFloor == i))
+				{
+					Workspace->currentFloor = i;
+				}
+			}
+		}
+		ImGui::EndChild();
+		ImGui::BeginChild("fbuttons");
+		if (ImGui::Button("Add Floor..."))
+		{
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Delete"))
+		{
+		}
+		ImGui::EndChild();
+		ImGui::EndGroup();
+		ImGui::EndDock();
+
+
+		ImGui::BeginDock("Levels");
+		ImGui::BeginGroup();
+
+		ImGui::BeginChild("level view", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()));
+		if (Workspace->isValidFloor(Workspace->currentFloor))
+		{
+			// TODO: List levels here
+		}
+		ImGui::EndChild();
+
+		ImGui::BeginChild("lbuttons");
+		if (ImGui::Button("Add Level..."))
+		{
+		} 
+		ImGui::SameLine();
+		if (ImGui::Button("Delete"))
+		{
+		}
+		ImGui::EndChild();
+
+		ImGui::EndGroup();
+		ImGui::EndDock();
+
+
 		ImGui::BeginDock("Entity List", &entityListWindowOpen, (ImGuiWindowFlags)0, d);
 		ImGui::EndDock();
-		ImGui::BeginDock("Entity Properties", &entityPropertiesWindowOpen, (ImGuiWindowFlags)0, d);
+
+
+		ImGui::BeginDock("Property Editor", &entityPropertiesWindowOpen, (ImGuiWindowFlags)0, d);
 		ImGui::EndDock();
+
+
 		ImGui::BeginDock("Main View", NULL, ImGuiWindowFlags_MenuBar, d);
 		if (ImGui::BeginMenuBar())
 		{
@@ -239,10 +331,12 @@ int main(int argc, char * argv[])
 			{
 				//ImGui::Checkbox("", bool);
 				ImGui::Checkbox("Entity List", &entityListWindowOpen);
-				ImGui::Checkbox("Entity Properties", &entityPropertiesWindowOpen);
+				ImGui::Checkbox("Property Editor", &entityPropertiesWindowOpen);
 				ImGui::Checkbox("Workspace Objects", &workspaceObjectsWindowOpen);
 				//ImGui::Checkbox("Main View", &mainViewOpen);
 				ImGui::Checkbox("Console", &showConsole);
+				ImGui::Separator();
+				ImGui::Checkbox("Show Start Window", &splashWindowOpen);
 #ifdef _DEBUG
 				ImGui::Separator();
 				ImGui::Checkbox("Show ImGui Test Window", &showImGuiTestWindow);

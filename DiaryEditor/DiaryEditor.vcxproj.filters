@@ -90,6 +90,9 @@
     <ClInclude Include="imgui_dock.h">
       <Filter>Source Files\ImGUI</Filter>
     </ClInclude>
+    <ClInclude Include="Roboto-Medium-TTF-Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
