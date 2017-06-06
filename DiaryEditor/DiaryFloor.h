@@ -16,6 +16,12 @@ public:
 
 	std::string scriptName;
 	std::string name;
-	int style;
+	
+	char uiFriendlyName[128];
+
+	char * GetUIFriendlyName();
+
+	void AddLevel(const char * sname, const char * name);
+	int style = 0;
 };
 

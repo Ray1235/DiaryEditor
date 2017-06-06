@@ -44,6 +44,112 @@ void Workspace_AddFloor(const char * sname, const char * name)
 	Workspace->AddFloor(sname, name);
 }
 
+inline void AddFloorDialog()
+{
+	if (ImGui::BeginPopupModal("Add a new floor", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		//ImGui::Text("");
+		static char name[128];
+		static char sname[128];
+		ImGui::InputText("Name", name, 128);
+		ImGui::InputText("Script Name", sname, 128);
+
+		if (ImGui::Button("Add", ImVec2(120, 0)))
+		{
+			Workspace_AddFloor(sname, name);
+			name[0] = '\0';
+			sname[0] = '\0';
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			name[0] = '\0';
+			sname[0] = '\0';
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
+inline void DeleteFloorDialog()
+{
+	if (ImGui::BeginPopupModal("Delete the floor?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Are you sure you want to delete this floor?\nThis action cannot be undone!");
+		//static char name[128];
+		//static char sname[128];
+		//ImGui::InputText("Name", name, 128);
+		//ImGui::InputText("Script Name", sname, 128);
+
+		if (ImGui::Button("Yes", ImVec2(120, 0)))
+		{
+			Workspace->RemoveFloorAtIndex(Workspace->currentFloor);
+			Workspace->currentSelection = SelectionType::None;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("No", ImVec2(120, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
+inline void AddLevelDialog()
+{
+	if (ImGui::BeginPopupModal("Add a new level", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		//ImGui::Text("");
+		static char name[128];
+		static char sname[128];
+		ImGui::InputText("Name", name, 128);
+		ImGui::InputText("Script Name", sname, 128);
+
+		if (ImGui::Button("Add", ImVec2(120, 0)))
+		{
+			Workspace->AddLevel(sname, name);
+			name[0] = '\0';
+			sname[0] = '\0';
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			name[0] = '\0';
+			sname[0] = '\0';
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
+inline void DeleteLevelDialog()
+{
+	if (ImGui::BeginPopupModal("Delete the level?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Are you sure you want to delete this level?\nThis action cannot be undone!");
+		//static char name[128];
+		//static char sname[128];
+		//ImGui::InputText("Name", name, 128);
+		//ImGui::InputText("Script Name", sname, 128);
+
+		if (ImGui::Button("Yes", ImVec2(120, 0)))
+		{
+			Workspace->RemoveLevelAtIndex(Workspace->currentLevel);
+			Workspace->currentSelection = SelectionType::None;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("No", ImVec2(120, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
 int main(int argc, char * argv[])
 {
 	Print("Initializing DiaryEditor...");
@@ -82,6 +188,7 @@ int main(int argc, char * argv[])
 	style2->ScrollbarRounding = 9.0f;
 	style2->GrabMinSize = 5.0f;
 	style2->GrabRounding = 3.0f;
+	style2->WindowTitleAlign = ImVec2(0.5f,0.5f);
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	style.Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.83f, 1.00f);
@@ -89,7 +196,7 @@ int main(int argc, char * argv[])
 	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.05f, 0.07f, 0.90f);
 	style.Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.07f, 0.07f, 0.09f, 0.90f);
 	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
-	style.Colors[ImGuiCol_Border] = ImVec4(0.80f, 0.80f, 0.83f, 0.88f);
+	style.Colors[ImGuiCol_Border] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
 	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.92f, 0.91f, 1.00f, 0.00f);
 	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
 	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
@@ -127,8 +234,6 @@ int main(int argc, char * argv[])
 	style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.50f, 0.00f, 1.00f);
 	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(1.00f, 0.50f, 0.00f, 0.43f);
 	style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.00f, 0.00f, 0.00f, 0.80f);
-
-
 
 
 	if (workspaceToLoad.length() != 0)
@@ -240,6 +345,8 @@ int main(int argc, char * argv[])
 				if (ImGui::Selectable(Workspace_GetFloorName(i), Workspace->currentFloor == i))
 				{
 					Workspace->currentFloor = i;
+					Workspace->currentLevel = 0;
+					Workspace->currentSelection = SelectionType::Floor;
 				}
 			}
 		}
@@ -247,11 +354,15 @@ int main(int argc, char * argv[])
 		ImGui::BeginChild("fbuttons");
 		if (ImGui::Button("Add Floor..."))
 		{
+			ImGui::OpenPopup("Add a new floor");
 		}
+		AddFloorDialog();
 		ImGui::SameLine();
-		if (ImGui::Button("Delete"))
+		if (ImGui::Button("Delete") && Workspace->isValidFloor(Workspace->currentFloor))
 		{
+			ImGui::OpenPopup("Delete the floor?");
 		}
+		DeleteFloorDialog();
 		ImGui::EndChild();
 		ImGui::EndGroup();
 		ImGui::EndDock();
@@ -264,17 +375,29 @@ int main(int argc, char * argv[])
 		if (Workspace->isValidFloor(Workspace->currentFloor))
 		{
 			// TODO: List levels here
+			for (int i = 0; i < Workspace->GetLevelCount(); i++)
+			{
+				if (ImGui::Selectable(Workspace->GetLevelName(i), Workspace->currentLevel == i))
+				{
+					Workspace->currentLevel = i;
+					Workspace->currentSelection = SelectionType::Level;
+				}
+			}
 		}
 		ImGui::EndChild();
 
 		ImGui::BeginChild("lbuttons");
-		if (ImGui::Button("Add Level..."))
+		if (ImGui::Button("Add Level...") && Workspace->isValidFloor(Workspace->currentFloor))
 		{
-		} 
-		ImGui::SameLine();
-		if (ImGui::Button("Delete"))
-		{
+			ImGui::OpenPopup("Add a new level");
 		}
+		AddLevelDialog();
+		ImGui::SameLine();
+		if (ImGui::Button("Delete") && Workspace->isValidLevel(Workspace->currentLevel))
+		{
+			ImGui::OpenPopup("Delete the level?");
+		}
+		DeleteLevelDialog();
 		ImGui::EndChild();
 
 		ImGui::EndGroup();
@@ -286,6 +409,39 @@ int main(int argc, char * argv[])
 
 
 		ImGui::BeginDock("Property Editor", &entityPropertiesWindowOpen, (ImGuiWindowFlags)0, d);
+		static int style = 0;
+		static bool overrideStyle = false;
+		switch (Workspace->currentSelection)
+		{
+		case SelectionType::None:
+			ImGui::Text("Nothing is selected!");
+			break;
+		case SelectionType::Entity:
+			ImGui::Text("An entity is currently selected");
+			break;
+		case SelectionType::Floor:
+			ImGui::InputText("Name", Workspace->GetCurrentFloor()->name, 128);
+			ImGui::InputText("Script Name", Workspace->GetCurrentFloor()->scriptName, 128);
+			ImGui::InputInt("Style ID", &Workspace->GetCurrentFloor()->style);
+			break;
+		case SelectionType::Level:
+			ImGui::InputText("Name", Workspace->GetCurrentLevel()->name, 128);
+			ImGui::InputText("Script Name", Workspace->GetCurrentLevel()->scriptName, 128);
+			ImGui::Checkbox("Override Floor's style", &Workspace->GetCurrentLevel()->overrrideFloorStyle);
+			if(Workspace->GetCurrentLevel()->overrrideFloorStyle) ImGui::InputInt("Style ID", &Workspace->GetCurrentLevel()->style);
+			if (ImGui::CollapsingHeader("Doors"))
+			{
+				ImGui::Checkbox("North", &Workspace->GetCurrentLevel()->doorEnabled[NORTH_DOOR]);
+				if (Workspace->GetCurrentLevel()->doorEnabled[NORTH_DOOR]) ImGui::InputText("Target Level", Workspace->GetCurrentLevel()->doorTarget[NORTH_DOOR], 128);
+				ImGui::Checkbox("East", &Workspace->GetCurrentLevel()->doorEnabled[EAST_DOOR]);
+				if (Workspace->GetCurrentLevel()->doorEnabled[EAST_DOOR]) ImGui::InputText("Target Level", Workspace->GetCurrentLevel()->doorTarget[EAST_DOOR], 128);
+				ImGui::Checkbox("South", &Workspace->GetCurrentLevel()->doorEnabled[SOUTH_DOOR]);
+				if (Workspace->GetCurrentLevel()->doorEnabled[SOUTH_DOOR]) ImGui::InputText("Target Level", Workspace->GetCurrentLevel()->doorTarget[SOUTH_DOOR], 128);
+				ImGui::Checkbox("West", &Workspace->GetCurrentLevel()->doorEnabled[WEST_DOOR]);
+				if (Workspace->GetCurrentLevel()->doorEnabled[WEST_DOOR]) ImGui::InputText("Target Level", Workspace->GetCurrentLevel()->doorTarget[WEST_DOOR], 128);
+			}
+			break;
+		}
 		ImGui::EndDock();
 
 

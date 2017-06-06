@@ -8231,10 +8231,32 @@ bool ImGui::InputTextEx(const char* label, char* buf, int buf_size, const ImVec2
         return value_changed;
 }
 
+bool ImGui::InputText(const char* label, std::string &buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiTextEditCallback callback, void* user_data)
+{
+	IM_ASSERT(!(flags & ImGuiInputTextFlags_Multiline)); // call InputTextMultiline()
+	char * cbuf = new char[buf_size];
+	strcpy(cbuf, buf.c_str());
+	bool r = InputTextEx(label, cbuf, (int)buf_size, ImVec2(0, 0), flags, callback, user_data);
+	buf = cbuf;
+	free(cbuf);
+	return r;
+}
+
+
 bool ImGui::InputText(const char* label, char* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiTextEditCallback callback, void* user_data)
 {
     IM_ASSERT(!(flags & ImGuiInputTextFlags_Multiline)); // call InputTextMultiline()
     return InputTextEx(label, buf, (int)buf_size, ImVec2(0,0), flags, callback, user_data);
+}
+
+bool ImGui::InputTextMultiline(const char * label, std::string & buf, size_t buf_size, const ImVec2& size, ImGuiInputTextFlags flags, ImGuiTextEditCallback callback, void * user_data)
+{
+	char * cbuf = new char[buf_size];
+	strcpy(cbuf, buf.c_str());
+	bool r = InputTextEx(label, cbuf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
+	buf = cbuf;
+	free(cbuf);
+	return r;
 }
 
 bool ImGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, const ImVec2& size, ImGuiInputTextFlags flags, ImGuiTextEditCallback callback, void* user_data)

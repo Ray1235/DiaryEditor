@@ -12,6 +12,11 @@ public:
 
 	DiaryEntityDefinition * parentDefinition;
 	std::string name;
+
+	int entPropertyCount = 0;
 	EntityProperty entProperties[MaxUserPropertiesForEntity];
+
+
+	void ImportDataFromDefinition();
 };
 
