@@ -1,5 +1,10 @@
 #pragma once
-
+#include "Version.h"
+#ifdef _DEBUG
+#define DE_STR "DiaryEditor-"DE_VERSION" (dev)"
+#else
+#define DE_STR "DiaryEditor-"DE_VERSION" (ship)"
+#endif
 
 #define MaxUserPropertiesForEntity 5
 

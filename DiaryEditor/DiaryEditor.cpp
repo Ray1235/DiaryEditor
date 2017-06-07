@@ -231,7 +231,7 @@ void RenderMainView()
 
 int main(int argc, char * argv[])
 {
-	Print("Initializing DiaryEditor...");
+	Print("Initializing %s...", DE_STR);
 	for (int i = 0; i < argc; i++)
 	{
 		//Print("Arg %d: %s", i, argv[i]);
@@ -239,7 +239,7 @@ int main(int argc, char * argv[])
 	if (argc >= 2)
 	{
 		Print("Loading %s...", argv[1]);
-		workspaceToLoad = argv[1];
+		workspaceToLoad = std::string(argv[1]);
 	}
 	sf::RenderWindow window(sf::VideoMode(800, 600), "DiaryEditor", sf::Style::Default);
 
@@ -256,7 +256,7 @@ int main(int argc, char * argv[])
 
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window, s_customFontTexture);
-	window.setTitle("DiaryEditor 1.0.0");
+	window.setTitle(DE_STR);
 
 	ImGuiStyle * style2 = &ImGui::GetStyle();
 
@@ -547,7 +547,9 @@ int main(int argc, char * argv[])
 					ImGui::MenuItem("TODO");
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Save", "Ctrl+S")) {}
+				if (ImGui::MenuItem("Save", "Ctrl+S")) {
+					Workspace->Save(workspaceToLoad);
+				}
 				if (ImGui::MenuItem("Save As..")) {}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Options"))
