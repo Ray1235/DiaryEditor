@@ -6,7 +6,8 @@ enum class SelectionType {
 	None,
 	Floor,
 	Level,
-	Entity
+	Entity,
+	EntityDef
 };
 
 class DiaryWorkspace
@@ -37,6 +38,7 @@ public:
 	int currentFloor = 0;
 	int currentLevel = 0;
 	int currentEntity = 0;
+	int currentEntityDef = 0;
 	SelectionType currentSelection = SelectionType::None; // for property editor	
 
 	std::vector<DiaryFloor *> floors;

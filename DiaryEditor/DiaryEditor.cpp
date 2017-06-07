@@ -526,6 +526,9 @@ int main(int argc, char * argv[])
 				if (Workspace->GetCurrentLevel()->doorEnabled[WEST_DOOR]) ImGui::InputText("Target Level", Workspace->GetCurrentLevel()->doorTarget[WEST_DOOR], 128);
 			}
 			break;
+		case SelectionType::EntityDef:
+			
+			break;
 		}
 		ImGui::EndDock();
 
@@ -594,6 +597,28 @@ int main(int argc, char * argv[])
 		RenderMainView();
 		ImGui::EndDock();
 		ImGui::BeginDock("Workspace Objects", &workspaceObjectsWindowOpen, (ImGuiWindowFlags)0, d);
+		ImGui::BeginChild("wObjs", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()));
+		if (ImGui::CollapsingHeader("Entities"))
+		{
+			for (int i = 0; i < Workspace->entities.size(); i++)
+			{
+				if (ImGui::Selectable(Workspace->entities[i].name.c_str(), Workspace->currentEntityDef == i))
+				{
+					Workspace->currentEntityDef = i;
+					Workspace->currentSelection = SelectionType::EntityDef;
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Styles"))
+		{
+			
+		}
+		ImGui::EndChild();
+		ImGui::BeginChild("WorkspaceBtns");
+		ImGui::Button("Add entity definition");
+		ImGui::SameLine();
+		ImGui::Button("Add style definition");
+		ImGui::EndChild();
 		ImGui::EndDock();
 		window.clear();
 		ImGui::Render();
