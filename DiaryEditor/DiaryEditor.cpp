@@ -3,8 +3,13 @@
 
 #include "stdafx.h"
 //#include "Roboto-Medium-TTF-Font.h"
+#include "DiaryDefaultTexture.h"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/OpenGL.hpp>
 
 // Splash window
 bool splashWindowOpen = true;
@@ -23,7 +28,14 @@ DiaryWorkspace * Workspace = NULL;
 
 std::string workspaceToLoad = "";
 
+sf::Clock deltaClock;
+
 static sf::Texture *s_customFontTexture = NULL; // used for the custom font
+static sf::Texture *defaultTexture = NULL; // used for you know what
+static sf::Font defaultFont; // used for overlay
+
+sf::Shader shader;
+
 unsigned char* fontpixels;
 int fntwidth, fntheight;
 bool isEmptyWorkspace = true;
@@ -150,6 +162,73 @@ inline void DeleteLevelDialog()
 	}
 }
 
+static float ZoomLevel = 1.0f;
+static float wscroll = 1.0f;
+static sf::RenderTexture levelRender;
+static sf::View levelView;
+
+int rendererW;
+int rendererH;
+
+bool refreshRenderTextures = true;
+ImVec2 windowSize;
+
+
+void RenderMainView()
+{
+	windowSize = ImGui::GetWindowContentRegionMax();
+	rendererW = windowSize.x - ImGui::GetStyle().WindowPadding.x;
+	rendererH = windowSize.y - (ImGui::GetStyle().WindowPadding.y + 26);
+	if (refreshRenderTextures)
+	{
+		levelRender.create(rendererW, rendererH);
+		refreshRenderTextures = false;
+	}
+	levelRender.clear();
+	levelRender.setView(levelView);
+	if (Workspace->isValidLevel(Workspace->currentLevel))
+	{
+		for (int y = 0; y < RoomHeight; y++)
+		{
+			for (int x = 0; x < RoomWidth; x++)
+			{
+				sf::Sprite s;
+				s.setTexture(*defaultTexture);
+				s.setPosition(sf::Vector2f(x * 32 , y * 32));
+				s.setTextureRect(sf::IntRect(0, 0, 32, 32));
+				levelRender.draw(s);
+			}
+		}
+		sf::Text t;
+		//sf::Text(std::string("test"), defaultFont)
+		t.setFont(defaultFont);
+		t.setString(std::string(Workspace->GetLevelName(Workspace->currentLevel)));
+		t.setPosition(0, -36);
+		levelRender.draw(t);
+		levelRender.display();
+		ImGui::Image(levelRender.getTexture());
+		if (ImGui::IsItemHovered())
+		{
+			static ImVec2 lastOffset;
+			static float lastScroll = 0.0f;
+			if ((ImGui::IsMouseDown(2)) && ImGui::GetIO().KeyAlt)
+			{
+				levelView.move(sf::Vector2f(-ImGui::GetMouseDragDelta(2).x*wscroll, -ImGui::GetMouseDragDelta(2).y*wscroll) - sf::Vector2f(lastOffset));
+			}
+			float scroll = pow(1.25, -ImGui::GetIO().MouseWheel);
+			wscroll *= scroll;
+			//levelView.zoom(scroll);
+			levelView.setSize(sf::Vector2f(rendererW*wscroll, -rendererH*wscroll)); // y axis has to be flipped, gosh
+			lastOffset = ImVec2(-ImGui::GetMouseDragDelta(2).x*wscroll, -ImGui::GetMouseDragDelta(2).y*wscroll);
+			lastScroll = scroll;
+		}
+	}
+	else {
+		ImGui::Text((std::to_string(ImGui::GetWindowPos().x + ImGui::GetStyle().WindowPadding.x) + " " + std::to_string(ImGui::GetWindowPos().y + ImGui::GetStyle().WindowPadding.y + 26)).c_str());
+		ImGui::Text("Please select a level");
+	}
+}
+
 int main(int argc, char * argv[])
 {
 	Print("Initializing DiaryEditor...");
@@ -170,10 +249,14 @@ int main(int argc, char * argv[])
 	s_customFontTexture->create(fntwidth, fntheight);
 	s_customFontTexture->update(fontpixels);
 
+	defaultTexture = new sf::Texture;
+	defaultTexture->loadFromMemory(defaultTex_data, defaultTex_size);
+
+	defaultFont.loadFromFile("segoeui.ttf");
+
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window, s_customFontTexture);
 	window.setTitle("DiaryEditor 1.0.0");
-	sf::Clock deltaClock;
 
 	ImGuiStyle * style2 = &ImGui::GetStyle();
 
@@ -270,6 +353,9 @@ int main(int argc, char * argv[])
 		}
 		loadedLayout = true;
 	}
+
+	levelView.setCenter(sf::Vector2f(RoomWidth * 16.0f, RoomHeight * 16.0f)); // for the viewport
+
 	ImGui::RootDock(ImVec2(0, 0), window.getSize());
 	while (window.isOpen()) {
 		sf::Event event;
@@ -299,6 +385,7 @@ int main(int argc, char * argv[])
 				ImGuiIO& io = ImGui::GetIO();
 				io.DisplaySize = window.getSize();
 				ImGui::RootDock(ImVec2(0, 0), window.getSize());
+				refreshRenderTextures = true;
 			}
 		}
 
@@ -444,8 +531,11 @@ int main(int argc, char * argv[])
 		}
 		ImGui::EndDock();
 
-
-		ImGui::BeginDock("Main View", NULL, ImGuiWindowFlags_MenuBar, d);
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+		//ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+		
+		ImGui::BeginDock("Main View", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -501,6 +591,7 @@ int main(int argc, char * argv[])
 			}
 			ImGui::EndMenuBar();
 		}
+		RenderMainView();
 		ImGui::EndDock();
 		ImGui::BeginDock("Workspace Objects", &workspaceObjectsWindowOpen, (ImGuiWindowFlags)0, d);
 		ImGui::EndDock();

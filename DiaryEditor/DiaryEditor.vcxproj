@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="DiaryDefaultTexture.h" />
     <ClInclude Include="DiaryEntity.h" />
     <ClInclude Include="DiaryEntityDefinition.h" />
     <ClInclude Include="DiaryFloor.h" />
