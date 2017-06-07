@@ -91,10 +91,6 @@ inline void DeleteFloorDialog()
 	if (ImGui::BeginPopupModal("Delete the floor?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::Text("Are you sure you want to delete this floor?\nThis action cannot be undone!");
-		//static char name[128];
-		//static char sname[128];
-		//ImGui::InputText("Name", name, 128);
-		//ImGui::InputText("Script Name", sname, 128);
 
 		if (ImGui::Button("Yes", ImVec2(120, 0)))
 		{
