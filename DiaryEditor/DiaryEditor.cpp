@@ -11,6 +11,8 @@
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/OpenGL.hpp>
 
+#pragma message("Compiling "DE_STR)
+
 // Splash window
 bool splashWindowOpen = true;
 
