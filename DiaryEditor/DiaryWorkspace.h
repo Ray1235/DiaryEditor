@@ -41,6 +41,9 @@ public:
 	int currentEntityDef = 0;
 	SelectionType currentSelection = SelectionType::None; // for property editor	
 
+	int AddEntityDefinition(const char * name, const char * scriptFunc, const char * imgPath, int propertyCount);
+
+
 	std::vector<DiaryFloor *> floors;
 	std::vector<DiaryEntityDefinition> entities;
 };

@@ -13,6 +13,7 @@ struct DiaryEntityDefinition
 	DiaryEntityDefinition(std::string NameV, std::string pathToImgRef, int propertyCount, ...);
 	std::string name;
 	std::string pathToReferenceImg;
+	std::string scriptFunc = "null";
 
 	int userPropertyCount = 0;
 	UserProperty userProperties[MaxUserPropertiesForEntity];

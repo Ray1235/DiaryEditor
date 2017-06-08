@@ -165,3 +165,12 @@ void DiaryWorkspace::AddLevel(const char * sname, const char * name)
 	level->name = name;
 	floors[currentFloor]->Levels.push_back(level);
 }
+
+int DiaryWorkspace::AddEntityDefinition(const char * name, const char * scriptFunc, const char * imgPath, int propertyCount)
+{
+	DiaryEntityDefinition e(name, imgPath, 0);
+	e.scriptFunc = scriptFunc;
+	e.userPropertyCount = propertyCount;
+	entities.push_back(e);
+	return entities.size() - 1;
+}

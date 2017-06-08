@@ -160,6 +160,60 @@ inline void DeleteLevelDialog()
 	}
 }
 
+inline void AddEntDefDialog()
+{
+	if (ImGui::BeginPopupModal("Add a new entity definition", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		//ImGui::Text("");
+		static char name[128];
+		static char scriptSpawn[128];
+		static char imgPath[128];
+		static char userpropn[MaxUserPropertiesForEntity][128];
+		static char userpropv[MaxUserPropertiesForEntity][128];
+		static int userPropCount = 0;
+		ImGui::InputText("Name", name, 128); ImGui::SameLine();
+		ImGui::InputText("Script spawn function", scriptSpawn, 128);
+		ImGui::InputText("Image Path", imgPath, 128);
+		ImGui::InputInt("Property Count", &userPropCount, 1, 1);
+		if (userPropCount < 0) userPropCount = 0;
+		if (userPropCount > MaxUserPropertiesForEntity) userPropCount = MaxUserPropertiesForEntity;
+		if (ImGui::CollapsingHeader("Properties"))
+		{
+			for (int i = 0; i < userPropCount; i++)
+			{
+				ImGui::PushID(i);
+				if (1)
+				{
+					ImGui::InputText("Name", userpropn[i], 128); ImGui::SameLine();
+					ImGui::InputText("Value", userpropv[i], 128);
+				}
+				ImGui::PopID();
+			}
+		}
+
+		if (ImGui::Button("Add", ImVec2(120, 0)))
+		{
+			int rIndex = Workspace->AddEntityDefinition(name, scriptSpawn, imgPath, userPropCount);
+			for (int i = 0; i < userPropCount; i++)
+			{
+				Workspace->entities[rIndex].userProperties[i].name = userpropn[i];
+				Workspace->entities[rIndex].userProperties[i].value = userpropv[i];
+			}
+			name[0] = '\0';
+			userPropCount = 0;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			name[0] = '\0';
+			userPropCount = 0;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
 static float ZoomLevel = 1.0f;
 static float wscroll = 1.0f;
 static sf::RenderTexture levelRender;
@@ -615,7 +669,11 @@ int main(int argc, char * argv[])
 		}
 		ImGui::EndChild();
 		ImGui::BeginChild("WorkspaceBtns");
-		ImGui::Button("Add entity definition");
+		if (ImGui::Button("Add entity definition"))
+		{
+			ImGui::OpenPopup("Add a new entity definition");
+		}
+		AddEntDefDialog();
 		ImGui::SameLine();
 		ImGui::Button("Add style definition");
 		ImGui::EndChild();
